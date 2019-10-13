@@ -6,7 +6,7 @@
   with_first_found:
     - "{{ ansible_distribution }}.yml"
     - "{{ ansible_os_family }}.yml"
-  tags: tftp
+  tags: tftp, config
 
 - name: Configure SELinux if it is active on the system
   include_tasks: selinux.yml
@@ -30,7 +30,7 @@
     group: "{{ tftp_group }}"
     mode: "{{ tftp_mode }}"
     setype: "{{ tftp_setype }}"
-  tags: tftp
+  tags: tftp, config
 
 - name: Install configuration file
   template:
@@ -38,14 +38,14 @@
     src: systemd_tftp.service.j2
   notify:
     - restart tftp
-  tags: tftp
+  tags: tftp, config
 
 - name: Ensure service is started
   service:
     name: "{{ tftp_service }}"
     state: started
     enabled: true
-  tags: tftp
+  tags: tftp, config
 
 - name: Install foreman map file
   template:
@@ -55,5 +55,5 @@
     - restart tftp
   when: tftp_server_foreman_support
   tags:
-    - tftp
+    - tftp, config
     - foreman
